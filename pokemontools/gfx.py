@@ -856,15 +856,15 @@ def png_to_1bpp(filename, **kwargs):
     return convert_2bpp_to_1bpp(image)
 
 
-def convert_to_2bpp(filenames=[]):
+def convert_to_2bpp(filenames=[], **kwargs):
     for filename in filenames:
         filename, name, extension = try_decompress(filename)
         if extension == '.1bpp':
-            export_1bpp_to_2bpp(filename)
+            export_1bpp_to_2bpp(filename, **kwargs)
         elif extension == '.2bpp':
             pass
         elif extension == '.png':
-            export_png_to_2bpp(filename)
+            export_png_to_2bpp(filename, **kwargs)
         else:
             raise Exception("Don't know how to convert {} to 2bpp!".format(filename))
 
@@ -923,6 +923,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('mode')
     ap.add_argument('filenames', nargs='*')
+    ap.add_argument('--interleave', action='store_true')
     args = ap.parse_args()
 
     method = {
@@ -936,7 +937,11 @@ def main():
     if method == None:
         raise Exception("Unknown conversion method!")
 
-    method(args.filenames)
+    kwargs = {
+        'interleave': args.interleave
+    }
+
+    method(args.filenames, **kwargs)
 
 if __name__ == "__main__":
     main()
